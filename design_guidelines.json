@@ -1,0 +1,135 @@
+{
+  "theme": "light",
+  "archetype": "6 (Vibrant Play)",
+  "global_styles": {
+    "typography": {
+      "headings": {
+        "font_family": "Nunito-Black, FredokaOne-Regular, system-ui",
+        "weight": "900",
+        "h1": "text-4xl tracking-tight leading-tight",
+        "h2": "text-3xl tracking-tight",
+        "h3": "text-2xl"
+      },
+      "body": {
+        "font_family": "Nunito-Regular, system-ui",
+        "weight": "400",
+        "base": "text-base leading-relaxed",
+        "small": "text-sm uppercase tracking-wider font-bold"
+      }
+    },
+    "colors": {
+      "primary_electric_yellow": "#FFEA00",
+      "primary_yellow_dark": "#DDB800",
+      "secondary_coral_red": "#FF5470",
+      "secondary_coral_dark": "#D83A54",
+      "accent_violet": "#8338EC",
+      "accent_violet_dark": "#6122B8",
+      "background_light": "#FDF8F5",
+      "surface_white": "#FFFFFF",
+      "text_dark": "#2B2118",
+      "text_muted": "#8C7A6B",
+      "success_green": "#58CC02",
+      "border_subtle": "#E5D9D0"
+    },
+    "spacing_and_layout": {
+      "screen_padding": "p-6",
+      "card_padding": "p-5",
+      "gap_large": "gap-6",
+      "gap_small": "gap-3",
+      "border_radius": {
+        "card": "rounded-3xl (24px)",
+        "button": "rounded-2xl (16px)",
+        "pill": "rounded-full (9999px)"
+      }
+    },
+    "shadows_and_depth": {
+      "gamified_button": "solid border-b-4 border-[darker_shade]",
+      "card_elevation": "border-2 border-border_subtle bg-surface_white border-b-4"
+    }
+  },
+  "components": {
+    "GamifiedButton": {
+      "description": "Duolingo-style tactile button. Solid background color, darker solid border-bottom (e.g., 4px), rounded corners.",
+      "states": {
+        "default": "Translate Y: 0, Border Bottom: 4px",
+        "pressed": "Translate Y: 4px, Border Bottom: 0px (Squish effect)"
+      }
+    },
+    "XPProgressBar": {
+      "description": "Rounded pill track with an inner filled pill. Electric yellow fill inside a light gray track. Border width 2px."
+    },
+    "StreakBadge": {
+      "description": "Small pill container with a fire icon and streak number. Text color in Coral Red. Bounces on app open."
+    },
+    "LevelCard": {
+      "description": "Showcases the current level (Spark/Ignite/Blaze/Inferno). Bold typography, large center icon using Lucide."
+    }
+  },
+  "screens": {
+    "Onboarding": {
+      "layout": "Full screen center aligned content. Top 40% contains abstract vibrant 3D image. Bottom 60% contains prompt '¿Para qué quieres usar tu creatividad?' and selection buttons.",
+      "interactions": "Buttons squish on press. Sequential fade-in for options."
+    },
+    "HomeDashboard": {
+      "header": "Top bar with Level Badge (Left) and Streak Counter (Right).",
+      "content": "Vertical scroll. 'Desafío Diario' (Daily Challenge) as massive hero card. 'Entrenador de Ideas' and 'Conector de Conceptos' as large stacked cards below."
+    },
+    "DailyChallenge": {
+      "layout": "Card-based prompt at the top. Large text input area. 'Enviar' (Submit) gamified button pinned to bottom."
+    },
+    "IdeaTrainer": {
+      "layout": "Chat interface. AI bubbles in light Violet background, User bubbles in surface white with borders. Socratic AI persona.",
+      "animations": "New messages pop in with a spring scaling effect (from 0.8 to 1.0)."
+    },
+    "DistantConcepts": {
+      "layout": "Two distinct cards side-by-side or stacked. Action button 'Fusionar' (Fuse) triggers interaction. Results displayed in a glowing bordered card below."
+    }
+  },
+  "motion_and_interactions": {
+    "level_up_celebration": "Full screen overlay. Level badge scales up dramatically with spring physics (damping: 12, stiffness: 100).",
+    "page_transitions": "Slide horizontally with standard mobile navigation fluid motion."
+  },
+  "media": {
+    "image_urls": [
+      {
+        "category": "onboarding_background_1",
+        "url": "https://images.unsplash.com/photo-1751644332113-2004a1b143f1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNzl8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGNvbG9yZnVsJTIwM2QlMjBzaGFwZXN8ZW58MHx8fHwxNzc4MTgwOTUyfDA&ixlib=rb-4.1.0&q=85",
+        "description": "Abstract colorful 3D shapes for onboarding step 1"
+      },
+      {
+        "category": "onboarding_background_2",
+        "url": "https://images.unsplash.com/photo-1748164685078-63a90de3100b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNzl8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMGNvbG9yZnVsJTIwM2QlMjBzaGFwZXN8ZW58MHx8fHwxNzc4MTgwOTUyfDA&ixlib=rb-4.1.0&q=85",
+        "description": "Abstract shapes in pastel colors for onboarding step 2"
+      }
+    ],
+    "icons": {
+      "library": "lucide-react-native",
+      "mapping": {
+        "streak": "Flame",
+        "xp": "Zap",
+        "level_spark": "Sparkles",
+        "level_ignite": "Lighter",
+        "level_blaze": "Flame",
+        "level_inferno": "Sun",
+        "daily_challenge": "Target",
+        "idea_trainer": "MessageCircle",
+        "bisociation": "GitMerge"
+      }
+    }
+  },
+  "testing_attributes": {
+    "instructions": "All interactive elements MUST have `testID` attribute formatted as kebab-case-role.",
+    "examples": [
+      "testID=\"onboarding-purpose-button\"",
+      "testID=\"home-daily-challenge-card\"",
+      "testID=\"submit-idea-button\""
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Use React Native components (.js files) with StyleSheet or NativeWind if configured. Build layouts using View, Text, TouchableOpacity.",
+    "For GamifiedButton, implement a custom pressable that animates translateY and borderBottomWidth on press to create a tactile squish effect.",
+    "Apply Archetype 6 (Vibrant Play) principles: heavy borders, rounded geometries, bright contrast.",
+    "The UI must be entirely in Spanish (Castellano).",
+    "Avoid generic soft drop shadows. Instead, use hard 'Neobrutalist' or gamified borders (e.g., solid 2px borders with solid offset bottom borders) for cards and buttons."
+  ]
+}
