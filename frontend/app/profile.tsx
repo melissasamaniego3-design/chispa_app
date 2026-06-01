@@ -14,7 +14,8 @@ import { ChevronLeft, RotateCcw, Bell } from 'lucide-react-native';
 import LevelBadge from '../src/components/LevelBadge';
 import XPProgressBar from '../src/components/XPProgressBar';
 import GamifiedButton from '../src/components/GamifiedButton';
-import { COLORS, LEVELS, PURPOSES, xpProgress, LevelId } from '../src/lib/levels';
+import Mascot from '../src/components/Mascot';
+import { COLORS, LEVELS, PURPOSES, xpProgress, LevelId, levelToPose } from '../src/lib/levels';
 import { loadProfile, Profile, resetProfile, updateProfile } from '../src/lib/storage';
 import { ensureDailyReminder } from '../src/lib/notifications';
 
