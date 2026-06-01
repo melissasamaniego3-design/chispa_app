@@ -105,8 +105,17 @@ async def claude_call(system: str, user_text: str, session_id: Optional[str] = N
         session_id=session_id or str(uuid.uuid4()),
         system_message=system,
     ).with_model(MODEL_PROVIDER, MODEL_NAME)
-    response = await chat.send_message(UserMessage(text=user_text))
-    return response
+    try:
+        return await chat.send_message(UserMessage(text=user_text))
+    except Exception as e:
+        msg = str(e).lower()
+        logger.warning("LLM call failed: %s", e)
+        if "budget" in msg or "quota" in msg or "rate" in msg:
+            raise HTTPException(
+                status_code=503,
+                detail="La chispa está descansando. Inténtalo en unos segundos.",
+            )
+        raise HTTPException(status_code=502, detail="Error temporal con la IA. Inténtalo de nuevo.")
 
 
 # ---------------------------------------------------------------------------
