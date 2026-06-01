@@ -42,19 +42,36 @@ export const PURPOSES: { id: string; label: string; emoji: string }[] = [
   { id: 'diversion', label: 'Pura diversión', emoji: '✨' },
 ];
 
+// Mapea el nivel a una pose de la mascota
+export function levelToPose(level: LevelId): 'sit_alert' | 'walking' | 'running' | 'eager_stand' {
+  return ({ 1: 'sit_alert', 2: 'walking', 3: 'running', 4: 'eager_stand' } as const)[level];
+}
+
 export const COLORS = {
-  yellow: '#FFEA00',
-  yellowDark: '#DDB800',
-  coral: '#FF5470',
-  coralDark: '#D83A54',
-  violet: '#8338EC',
-  violetDark: '#6122B8',
-  bg: '#FDF8F5',
-  surface: '#FFFFFF',
-  text: '#2B2118',
-  muted: '#8C7A6B',
+  // primary palette from Chispa mascot art
+  orange: '#F2541B',
+  orangeDark: '#C43E0F',
+  yellow: '#FFD400',
+  yellowDark: '#D9B400',
+  purple: '#7A2BC4',
+  purpleDark: '#5A1FA0',
+  red: '#E91E2B',
+  redDark: '#B81620',
+
+  // aliases used across the app (mapped to the new palette)
+  coral: '#E91E2B',
+  coralDark: '#B81620',
+  violet: '#7A2BC4',
+  violetDark: '#5A1FA0',
   green: '#58CC02',
   greenDark: '#46A302',
-  border: '#E5D9D0',
-  borderStrong: '#2B2118',
+
+  // surfaces
+  bg: '#FFF8EE',
+  surface: '#FFFFFF',
+  surfaceWarm: '#FFF1DC',
+  text: '#1A1410',
+  muted: '#7E6B5B',
+  border: '#EADBC8',
+  borderStrong: '#1A1410',
 };

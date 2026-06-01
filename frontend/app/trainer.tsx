@@ -13,8 +13,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { ChevronLeft, Send, RefreshCw, MessageCircle } from 'lucide-react-native';
+import { ChevronLeft, Send, RefreshCw } from 'lucide-react-native';
 import LevelBadge from '../src/components/LevelBadge';
+import Mascot from '../src/components/Mascot';
 import { COLORS, xpProgress } from '../src/lib/levels';
 import {
   clearTrainerHistory,
@@ -122,13 +123,11 @@ export default function Trainer() {
         >
           {messages.length === 0 && (
             <View style={styles.emptyCard} testID="trainer-empty">
-              <View style={styles.emptyIcon}>
-                <MessageCircle size={32} color={COLORS.violet} strokeWidth={2.5} />
-              </View>
+              <Mascot pose="begging" size={130} />
               <Text style={styles.emptyTitle}>¿Sobre qué quieres pensar?</Text>
               <Text style={styles.emptyText}>
                 Lanza un tema, una idea, un problema, una obsesión. Te haré preguntas
-                inesperadas para llevarla a otro lugar. No te juzgo, te empujo.
+                inesperadas para llevarlo a otro lugar. No te juzgo, te empujo. 🐾
               </Text>
               <View style={styles.suggestions}>
                 {SUGGESTIONS.map((s) => (
@@ -201,15 +200,19 @@ function Bubble({ message }: { message: Message }) {
   }, [scale, opacity]);
 
   const isUser = message.role === 'user';
+  if (isUser) {
+    return (
+      <Animated.View style={[styles.bubble, styles.userBubble, { transform: [{ scale }], opacity }]}>
+        <Text style={[styles.bubbleText, styles.userText]}>{message.content}</Text>
+      </Animated.View>
+    );
+  }
   return (
-    <Animated.View
-      style={[
-        styles.bubble,
-        isUser ? styles.userBubble : styles.aiBubble,
-        { transform: [{ scale }], opacity },
-      ]}
-    >
-      <Text style={[styles.bubbleText, isUser && styles.userText]}>{message.content}</Text>
+    <Animated.View style={[styles.aiRow, { transform: [{ scale }], opacity }]}>
+      <Mascot pose="side_sit" size={48} style={styles.aiAvatar} />
+      <View style={[styles.bubble, styles.aiBubble]}>
+        <Text style={styles.bubbleText}>{message.content}</Text>
+      </View>
     </Animated.View>
   );
 }
@@ -255,19 +258,18 @@ const styles = StyleSheet.create({
     borderColor: COLORS.borderStrong,
     borderBottomWidth: 5,
     padding: 22,
-    alignItems: 'flex-start',
+    alignItems: 'center',
     gap: 10,
     marginTop: 12,
   },
-  emptyIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
-    backgroundColor: '#F4ECFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: COLORS.violet,
+  aiRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 6,
+    maxWidth: '92%',
+  },
+  aiAvatar: {
+    marginBottom: -4,
   },
   emptyTitle: { fontSize: 24, fontWeight: '900', color: COLORS.text },
   emptyText: { fontSize: 15, lineHeight: 22, color: COLORS.muted },
@@ -297,14 +299,15 @@ const styles = StyleSheet.create({
   },
   aiBubble: {
     alignSelf: 'flex-start',
-    backgroundColor: '#F4ECFF',
+    backgroundColor: '#FFE7D5',
     borderBottomLeftRadius: 6,
-    borderColor: COLORS.violet,
-    borderBottomColor: COLORS.violetDark,
+    borderColor: COLORS.orange,
+    borderBottomColor: COLORS.orangeDark,
+    flex: 1,
   },
   bubbleText: { fontSize: 15, lineHeight: 22, color: COLORS.text, fontWeight: '500' },
   userText: { color: COLORS.text },
-  typing: { fontSize: 22, color: COLORS.violet, fontWeight: '900' },
+  typing: { fontSize: 22, color: COLORS.orange, fontWeight: '900' },
   inputBar: {
     flexDirection: 'row',
     alignItems: 'flex-end',
@@ -333,12 +336,12 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 14,
-    backgroundColor: COLORS.violet,
+    backgroundColor: COLORS.orange,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: COLORS.borderStrong,
     borderBottomWidth: 4,
-    borderBottomColor: COLORS.violetDark,
+    borderBottomColor: COLORS.orangeDark,
   },
 });

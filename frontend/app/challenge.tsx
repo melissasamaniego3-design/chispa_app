@@ -13,10 +13,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { ChevronLeft, Lightbulb, Target, Sparkles } from 'lucide-react-native';
+import { ChevronLeft, Lightbulb, Target } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import GamifiedButton from '../src/components/GamifiedButton';
 import LevelBadge from '../src/components/LevelBadge';
+import Mascot from '../src/components/Mascot';
 import { COLORS, xpProgress } from '../src/lib/levels';
 import {
   applyChallengeCompletion,
@@ -154,6 +155,14 @@ export default function Challenge() {
 
           {!completed && (
             <>
+              <View style={styles.mascotRow}>
+                <Mascot pose="curious_up" size={90} />
+                <View style={styles.mascotPrompt}>
+                  <Text style={styles.mascotPromptText}>
+                    Cuéntame qué se te ocurre. No te censures, ¡yo te escucho! 🐾
+                  </Text>
+                </View>
+              </View>
               <Text style={styles.label}>Tu respuesta</Text>
               <TextInput
                 testID="challenge-input"
@@ -178,6 +187,13 @@ export default function Challenge() {
 
           {completed && feedback && (
             <View style={styles.feedbackWrap} testID="challenge-feedback">
+              <View style={styles.celebrationRow}>
+                <Mascot pose="happy_tongue" size={110} />
+                <View style={styles.celebrationBubble}>
+                  <Text style={styles.celebrationText}>¡Buen trabajo! +{feedback.xp} XP 🎉</Text>
+                </View>
+              </View>
+
               <View style={styles.responseBubble}>
                 <Text style={styles.responseLabel}>TU RESPUESTA</Text>
                 <Text style={styles.responseText}>{response}</Text>
@@ -185,7 +201,7 @@ export default function Challenge() {
 
               <View style={styles.feedbackCard}>
                 <View style={styles.feedbackHeader}>
-                  <Sparkles size={20} color={COLORS.violet} strokeWidth={2.5} />
+                  <Text style={styles.feedbackBolt}>⚡</Text>
                   <Text style={styles.feedbackTitle}>Chispa dice</Text>
                   <View style={styles.xpPill}>
                     <Text style={styles.xpPillText}>+{feedback.xp} XP</Text>
@@ -200,7 +216,7 @@ export default function Challenge() {
 
               <GamifiedButton
                 label="Volver al inicio"
-                variant="violet"
+                variant="purple"
                 onPress={() => router.replace('/home')}
                 testID="challenge-back-home"
                 style={{ marginTop: 8 }}
@@ -325,6 +341,39 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   feedbackWrap: { gap: 14 },
+  mascotRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 14,
+  },
+  mascotPrompt: {
+    flex: 1,
+    backgroundColor: COLORS.surface,
+    borderRadius: 16,
+    padding: 12,
+    borderWidth: 2,
+    borderColor: COLORS.borderStrong,
+    borderBottomWidth: 4,
+  },
+  mascotPromptText: { fontSize: 14, color: COLORS.text, fontWeight: '600', lineHeight: 20 },
+  celebrationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 4,
+  },
+  celebrationBubble: {
+    flex: 1,
+    backgroundColor: COLORS.yellow,
+    borderRadius: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderWidth: 2,
+    borderColor: COLORS.borderStrong,
+    borderBottomWidth: 4,
+  },
+  celebrationText: { fontSize: 16, color: COLORS.text, fontWeight: '900' },
   responseBubble: {
     backgroundColor: COLORS.surface,
     borderRadius: 18,
@@ -342,16 +391,17 @@ const styles = StyleSheet.create({
   },
   responseText: { fontSize: 15, color: COLORS.text, lineHeight: 22 },
   feedbackCard: {
-    backgroundColor: '#F4ECFF',
+    backgroundColor: '#FFF1DC',
     borderRadius: 22,
     padding: 18,
     borderWidth: 2,
-    borderColor: COLORS.violet,
+    borderColor: COLORS.orange,
     borderBottomWidth: 6,
-    borderBottomColor: COLORS.violetDark,
+    borderBottomColor: COLORS.orangeDark,
   },
   feedbackHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
-  feedbackTitle: { flex: 1, fontSize: 18, fontWeight: '900', color: COLORS.violet },
+  feedbackBolt: { fontSize: 20 },
+  feedbackTitle: { flex: 1, fontSize: 18, fontWeight: '900', color: COLORS.orange },
   xpPill: {
     backgroundColor: COLORS.green,
     paddingHorizontal: 12,
@@ -374,7 +424,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '900',
     letterSpacing: 1.2,
-    color: COLORS.coral,
+    color: COLORS.red,
     marginBottom: 4,
   },
   pushText: { fontSize: 15, color: COLORS.text, fontWeight: '600', lineHeight: 21 },

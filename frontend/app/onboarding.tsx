@@ -4,19 +4,16 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  Image,
   Pressable,
   Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { Sparkles } from 'lucide-react-native';
 import GamifiedButton from '../src/components/GamifiedButton';
+import Mascot, { MascotHero, MascotLogo } from '../src/components/Mascot';
 import { COLORS, PURPOSES } from '../src/lib/levels';
 import { loadProfile, saveProfile } from '../src/lib/storage';
 import { ensureDailyReminder } from '../src/lib/notifications';
-
-const HERO = 'https://images.unsplash.com/photo-1751644332113-2004a1b143f1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNzl8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGNvbG9yZnVsJTIwM2QlMjBzaGFwZXN8ZW58MHx8fHwxNzc4MTgwOTUyfDA&ixlib=rb-4.1.0&q=85';
 
 export default function Onboarding() {
   const router = useRouter();
@@ -36,44 +33,49 @@ export default function Onboarding() {
         {[0, 1, 2].map((i) => (
           <View
             key={i}
-            style={[styles.dot, step >= i && { backgroundColor: COLORS.violet }]}
+            style={[styles.dot, step >= i && { backgroundColor: COLORS.orange }]}
           />
         ))}
       </View>
 
       {step === 0 && (
         <ScrollView contentContainerStyle={styles.scroll}>
-          <Image source={{ uri: HERO }} style={styles.hero} />
-          <View style={styles.titleRow}>
-            <Sparkles size={32} color={COLORS.violet} strokeWidth={2.5} />
-            <Text style={styles.title} testID="onboarding-title">Chispa</Text>
+          <View style={styles.heroWrap}>
+            <MascotHero width={300} />
           </View>
           <Text style={styles.subtitle}>
-            Entrena tu pensamiento creativo con retos diarios e ideas absurdas, guiados por una IA.
+            Entrena tu pensamiento creativo con retos diarios e ideas absurdas.
+            Yo te acompaño en el viaje. 🐶⚡
           </Text>
           <GamifiedButton
             label="Empezar"
-            variant="violet"
+            variant="orange"
             onPress={() => setStep(1)}
             testID="onboarding-start"
-            style={{ marginTop: 24 }}
+            style={{ marginTop: 28 }}
           />
         </ScrollView>
       )}
 
       {step === 1 && (
         <ScrollView contentContainerStyle={styles.scroll}>
+          <View style={styles.logoWrap}>
+            <MascotLogo width={180} />
+          </View>
+          <View style={styles.mascotInline}>
+            <Mascot pose="curious_up" size={140} />
+          </View>
           <Text style={styles.eyebrow}>Cómo funciona</Text>
           <Text style={styles.h2}>Cuatro niveles. Una llama que crece.</Text>
-          <View style={{ gap: 12, marginTop: 20 }}>
-            <LevelRow num={1} name="Chispa" color={COLORS.yellow} desc="Calientas motores. La IA te lleva de la mano." />
-            <LevelRow num={2} name="Llama" color="#FF9F1C" desc="Saltos laterales. Menos pistas, más ideas." />
-            <LevelRow num={3} name="Hoguera" color={COLORS.coral} desc="Conexiones lejanas. La IA empuja fuerte." />
-            <LevelRow num={4} name="Infierno" color={COLORS.violet} desc="Modo experto. La IA te reta sin piedad." />
+          <View style={{ gap: 12, marginTop: 18 }}>
+            <LevelRow num={1} name="Chispa" color={COLORS.yellow} desc="Calientas motores. Yo te llevo de la pata." />
+            <LevelRow num={2} name="Llama" color={COLORS.orange} desc="Saltos laterales. Menos pistas, más ideas." />
+            <LevelRow num={3} name="Hoguera" color={COLORS.red} desc="Conexiones lejanas. Te empujo fuerte." />
+            <LevelRow num={4} name="Infierno" color={COLORS.purple} desc="Modo experto. Te reto sin piedad." />
           </View>
           <GamifiedButton
             label="Vamos"
-            variant="violet"
+            variant="purple"
             onPress={() => setStep(2)}
             testID="onboarding-next"
             style={{ marginTop: 28 }}
@@ -83,12 +85,15 @@ export default function Onboarding() {
 
       {step === 2 && (
         <ScrollView contentContainerStyle={styles.scroll}>
+          <View style={styles.mascotInline}>
+            <Mascot pose="begging" size={150} />
+          </View>
           <Text style={styles.eyebrow}>Una pregunta</Text>
           <Text style={styles.h2}>¿Para qué quieres usar tu creatividad?</Text>
           <Text style={[styles.subtitle, { marginTop: 8 }]}>
             Solo personaliza ejemplos. Todos empezamos en nivel 1.
           </Text>
-          <View style={{ gap: 12, marginTop: 24 }}>
+          <View style={{ gap: 12, marginTop: 22 }}>
             {PURPOSES.map((p) => (
               <PurposeCard
                 key={p.id}
@@ -102,7 +107,7 @@ export default function Onboarding() {
           </View>
           <GamifiedButton
             label="Encender la chispa"
-            variant="yellow"
+            variant="orange"
             disabled={!purpose}
             onPress={finish}
             testID="onboarding-finish"
@@ -154,9 +159,9 @@ function PurposeCard({
           styles.purposeCard,
           {
             transform: [{ scale }],
-            borderColor: selected ? COLORS.violet : COLORS.borderStrong,
-            backgroundColor: selected ? '#F4ECFF' : COLORS.surface,
-            borderBottomColor: selected ? COLORS.violetDark : COLORS.borderStrong,
+            borderColor: selected ? COLORS.orange : COLORS.borderStrong,
+            backgroundColor: selected ? '#FFE7D5' : COLORS.surface,
+            borderBottomColor: selected ? COLORS.orangeDark : COLORS.borderStrong,
           },
         ]}
       >
@@ -179,22 +184,23 @@ const styles = StyleSheet.create({
     width: 28,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#EADFD3',
+    backgroundColor: '#EADBC8',
   },
   scroll: { padding: 24, paddingBottom: 48 },
-  hero: { width: '100%', height: 240, borderRadius: 28, marginBottom: 20, backgroundColor: '#eee' },
-  titleRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  title: { fontSize: 48, fontWeight: '900', color: COLORS.text, letterSpacing: -1 },
+  heroWrap: { alignItems: 'center', marginTop: 8, marginBottom: 8 },
+  logoWrap: { alignItems: 'center', marginBottom: 4 },
+  mascotInline: { alignItems: 'center', marginBottom: 8, marginTop: 4 },
   eyebrow: {
     fontSize: 12,
     fontWeight: '900',
-    color: COLORS.violet,
+    color: COLORS.orange,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
     marginBottom: 8,
+    textAlign: 'center',
   },
-  h2: { fontSize: 30, fontWeight: '900', color: COLORS.text, lineHeight: 36 },
-  subtitle: { fontSize: 17, color: COLORS.muted, lineHeight: 24, marginTop: 12 },
+  h2: { fontSize: 28, fontWeight: '900', color: COLORS.text, lineHeight: 34, textAlign: 'center' },
+  subtitle: { fontSize: 17, color: COLORS.muted, lineHeight: 24, marginTop: 12, textAlign: 'center' },
   levelRow: {
     flexDirection: 'row',
     alignItems: 'center',

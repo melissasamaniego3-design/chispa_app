@@ -3,12 +3,15 @@ import { Animated, Pressable, StyleSheet, Text, ViewStyle, TextStyle, Platform }
 import * as Haptics from 'expo-haptics';
 import { COLORS } from '../lib/levels';
 
-type Variant = 'yellow' | 'coral' | 'violet' | 'green' | 'ghost';
+type Variant = 'yellow' | 'coral' | 'violet' | 'green' | 'ghost' | 'orange' | 'purple' | 'red';
 
 const VARIANTS: Record<Variant, { bg: string; bottom: string; text: string }> = {
   yellow: { bg: COLORS.yellow, bottom: COLORS.yellowDark, text: COLORS.text },
-  coral: { bg: COLORS.coral, bottom: COLORS.coralDark, text: '#fff' },
-  violet: { bg: COLORS.violet, bottom: COLORS.violetDark, text: '#fff' },
+  orange: { bg: COLORS.orange, bottom: COLORS.orangeDark, text: '#fff' },
+  red: { bg: COLORS.red, bottom: COLORS.redDark, text: '#fff' },
+  purple: { bg: COLORS.purple, bottom: COLORS.purpleDark, text: '#fff' },
+  coral: { bg: COLORS.red, bottom: COLORS.redDark, text: '#fff' },
+  violet: { bg: COLORS.purple, bottom: COLORS.purpleDark, text: '#fff' },
   green: { bg: COLORS.green, bottom: COLORS.greenDark, text: '#fff' },
   ghost: { bg: COLORS.surface, bottom: COLORS.border, text: COLORS.text },
 };

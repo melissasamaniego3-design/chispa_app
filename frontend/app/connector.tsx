@@ -13,9 +13,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { ChevronLeft, GitMerge, Sparkles, Shuffle } from 'lucide-react-native';
+import { ChevronLeft, GitMerge, Shuffle } from 'lucide-react-native';
 import GamifiedButton from '../src/components/GamifiedButton';
 import LevelBadge from '../src/components/LevelBadge';
+import Mascot from '../src/components/Mascot';
 import { COLORS, xpProgress } from '../src/lib/levels';
 import { applyChallengeCompletion, loadProfile, Profile, saveProfile } from '../src/lib/storage';
 import { api, Concepts, Fusion } from '../src/lib/api';
@@ -91,9 +92,12 @@ export default function Connector() {
         keyboardVerticalOffset={20}
       >
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-          <Text style={styles.intro}>
-            Dos conceptos que parecen no tener nada que ver. Tu trabajo: encontrar la chispa.
-          </Text>
+          <View style={styles.introRow}>
+            <Mascot pose="play_bow" size={90} />
+            <Text style={styles.intro}>
+              Dos conceptos que parecen no tener nada que ver. Tu trabajo: encontrar la chispa.
+            </Text>
+          </View>
 
           {loading ? (
             <View style={styles.center}>
@@ -139,7 +143,7 @@ export default function Connector() {
               {fusion && (
                 <View style={styles.fusionResult} testID="connector-result">
                   <View style={styles.fusionHeader}>
-                    <Sparkles size={20} color={COLORS.violet} strokeWidth={2.5} />
+                    <Mascot pose="happy_tongue" size={60} />
                     <Text style={styles.fusionTitle}>Bisociaciones</Text>
                   </View>
                   {fusion.fusions.map((f, i) => (
@@ -206,7 +210,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: { flex: 1, fontSize: 18, fontWeight: '900', color: COLORS.text, marginLeft: 8 },
   scroll: { padding: 20, paddingBottom: 60 },
-  intro: { fontSize: 15, color: COLORS.muted, lineHeight: 22, marginBottom: 18 },
+  introRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 18 },
+  intro: { flex: 1, fontSize: 15, color: COLORS.muted, lineHeight: 22 },
   center: { alignItems: 'center', justifyContent: 'center', paddingVertical: 60, gap: 12 },
   loading: { color: COLORS.muted, fontWeight: '700' },
   conceptsRow: {
@@ -275,16 +280,16 @@ const styles = StyleSheet.create({
   },
   fusionResult: {
     marginTop: 22,
-    backgroundColor: '#F4ECFF',
+    backgroundColor: '#FFF1DC',
     borderRadius: 22,
     borderWidth: 2,
-    borderColor: COLORS.violet,
+    borderColor: COLORS.orange,
     borderBottomWidth: 6,
-    borderBottomColor: COLORS.violetDark,
+    borderBottomColor: COLORS.orangeDark,
     padding: 18,
   },
-  fusionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
-  fusionTitle: { fontSize: 18, fontWeight: '900', color: COLORS.violet },
+  fusionHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
+  fusionTitle: { fontSize: 20, fontWeight: '900', color: COLORS.orange },
   fusionItem: {
     flexDirection: 'row',
     gap: 12,
@@ -309,12 +314,12 @@ const styles = StyleSheet.create({
   fusionText: { flex: 1, fontSize: 15, color: COLORS.text, lineHeight: 21 },
   invite: {
     marginTop: 8,
-    backgroundColor: COLORS.violet,
+    backgroundColor: COLORS.purple,
     borderRadius: 14,
     padding: 14,
     borderWidth: 2,
     borderColor: COLORS.borderStrong,
   },
-  inviteLabel: { fontSize: 11, fontWeight: '900', letterSpacing: 1.2, color: '#FFEA00', marginBottom: 4 },
+  inviteLabel: { fontSize: 11, fontWeight: '900', letterSpacing: 1.2, color: COLORS.yellow, marginBottom: 4 },
   inviteText: { fontSize: 15, color: '#fff', fontWeight: '600', lineHeight: 21 },
 });

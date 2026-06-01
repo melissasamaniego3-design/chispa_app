@@ -72,11 +72,14 @@ export default function ProfileScreen() {
       <ScrollView contentContainerStyle={styles.scroll}>
         {/* Stats Hero */}
         <View style={styles.heroCard}>
-          <View style={styles.heroLevel}>
-            <LevelBadge level={xp.level} />
+          <View style={styles.heroRow}>
+            <Mascot pose={levelToPose(xp.level)} size={110} />
+            <View style={{ flex: 1 }}>
+              <LevelBadge level={xp.level} />
+              <Text style={styles.heroName}>{LEVELS[xp.level].name}</Text>
+              <Text style={styles.heroTagline}>{LEVELS[xp.level].tagline}</Text>
+            </View>
           </View>
-          <Text style={styles.heroName}>{LEVELS[xp.level].name}</Text>
-          <Text style={styles.heroTagline}>{LEVELS[xp.level].tagline}</Text>
           <View style={{ marginTop: 16 }}>
             <XPProgressBar pct={xp.pct} current={xp.current} needed={xp.needed} />
           </View>
@@ -130,8 +133,8 @@ export default function ProfileScreen() {
             testID="profile-notifications"
             value={profile.notifications}
             onValueChange={toggleNotif}
-            thumbColor={profile.notifications ? COLORS.violet : '#fff'}
-            trackColor={{ false: '#E5D9D0', true: '#D4B6F5' }}
+            thumbColor={profile.notifications ? COLORS.orange : '#fff'}
+            trackColor={{ false: '#EADBC8', true: '#FFD0AC' }}
           />
         </View>
 
@@ -217,9 +220,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 5,
     padding: 18,
   },
-  heroLevel: { alignSelf: 'flex-start' },
-  heroName: { fontSize: 38, fontWeight: '900', color: COLORS.text, marginTop: 12, letterSpacing: -1 },
-  heroTagline: { fontSize: 14, color: COLORS.muted, fontWeight: '600' },
+  heroRow: { flexDirection: 'row', alignItems: 'center', gap: 14 },
+  heroName: { fontSize: 28, fontWeight: '900', color: COLORS.text, marginTop: 8, letterSpacing: -0.5 },
+  heroTagline: { fontSize: 13, color: COLORS.muted, fontWeight: '600' },
   statsRow: { flexDirection: 'row', gap: 12 },
   stat: {
     flex: 1,
@@ -257,7 +260,7 @@ const styles = StyleSheet.create({
   levelName: { fontSize: 16, fontWeight: '900', color: COLORS.text },
   levelTag: { fontSize: 12, color: COLORS.muted, fontWeight: '600' },
   activePill: {
-    backgroundColor: COLORS.violet,
+    backgroundColor: COLORS.orange,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 999,
