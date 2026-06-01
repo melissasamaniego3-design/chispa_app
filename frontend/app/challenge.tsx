@@ -17,7 +17,8 @@ import { ChevronLeft, Lightbulb, Target } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import GamifiedButton from '../src/components/GamifiedButton';
 import LevelBadge from '../src/components/LevelBadge';
-import Mascot from '../src/components/Mascot';
+import Mascot, { MascotPose } from '../src/components/Mascot';
+import MascotBubble from '../src/components/MascotBubble';
 import { COLORS, xpProgress } from '../src/lib/levels';
 import {
   applyChallengeCompletion,
@@ -108,14 +109,30 @@ export default function Challenge() {
       <SafeAreaView style={styles.safe} edges={['top']}>
         <Header onBack={() => router.back()} level={1} />
         <View style={styles.center}>
-          <ActivityIndicator color={COLORS.violet} size="large" />
+          <Mascot pose="sleepy_curl" size={140} />
           <Text style={styles.loading}>Encendiendo tu reto…</Text>
+          <ActivityIndicator color={COLORS.violet} size="small" />
         </View>
       </SafeAreaView>
     );
   }
 
   const level = xpProgress(profile.xp).level;
+
+  // Reactive mascot state
+  const trimmed = response.trim();
+  let idlePose: MascotPose = 'walking';
+  let idleMsg = 'Cuéntame qué se te ocurre. No te censures, ¡yo te escucho! 🐾';
+  if (submitting) {
+    idlePose = 'play_bow';
+    idleMsg = 'Mmm… déjame ver con atención lo que escribiste… 🔍';
+  } else if (trimmed.length >= 5) {
+    idlePose = 'curious_up';
+    idleMsg = '¡Eso suena interesante! Sigue, ¿qué más se te ocurre?';
+  } else if (trimmed.length > 0) {
+    idlePose = 'eager_stand';
+    idleMsg = '¡Atento! Estoy contigo. Suelta esa idea sin miedo.';
+  }
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -155,14 +172,14 @@ export default function Challenge() {
 
           {!completed && (
             <>
-              <View style={styles.mascotRow}>
-                <Mascot pose="curious_up" size={90} />
-                <View style={styles.mascotPrompt}>
-                  <Text style={styles.mascotPromptText}>
-                    Cuéntame qué se te ocurre. No te censures, ¡yo te escucho! 🐾
-                  </Text>
-                </View>
-              </View>
+              <MascotBubble
+                pose={idlePose}
+                message={idleMsg}
+                size={90}
+                variant="cream"
+                testID="challenge-mascot-bubble"
+                style={{ marginBottom: 14 }}
+              />
               <Text style={styles.label}>Tu respuesta</Text>
               <TextInput
                 testID="challenge-input"
@@ -188,7 +205,7 @@ export default function Challenge() {
           {completed && feedback && (
             <View style={styles.feedbackWrap} testID="challenge-feedback">
               <View style={styles.celebrationRow}>
-                <Mascot pose="happy_tongue" size={110} />
+                <Mascot pose="running" size={110} bounce />
                 <View style={styles.celebrationBubble}>
                   <Text style={styles.celebrationText}>¡Buen trabajo! +{feedback.xp} XP 🎉</Text>
                 </View>

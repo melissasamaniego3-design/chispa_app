@@ -16,7 +16,8 @@ import { useRouter } from 'expo-router';
 import { ChevronLeft, GitMerge, Shuffle } from 'lucide-react-native';
 import GamifiedButton from '../src/components/GamifiedButton';
 import LevelBadge from '../src/components/LevelBadge';
-import Mascot from '../src/components/Mascot';
+import Mascot, { MascotPose } from '../src/components/Mascot';
+import MascotBubble from '../src/components/MascotBubble';
 import { COLORS, xpProgress } from '../src/lib/levels';
 import { applyChallengeCompletion, loadProfile, Profile, saveProfile } from '../src/lib/storage';
 import { api, Concepts, Fusion } from '../src/lib/api';
@@ -76,6 +77,27 @@ export default function Connector() {
   if (!profile) return <View style={styles.safe} />;
   const level = xpProgress(profile.xp).level;
 
+  // Reactive mascot for the intro/state
+  const trimmed = userIdea.trim();
+  let introPose: MascotPose = 'play_bow';
+  let introMsg = 'Dos conceptos que parecen no tener nada que ver. Tu trabajo: encontrar la chispa.';
+  if (loading) {
+    introPose = 'sleepy_curl';
+    introMsg = 'Buscando conceptos lejanos en mi caja de huesos… 🦴';
+  } else if (fusing) {
+    introPose = 'eager_stand';
+    introMsg = 'Olfateando conexiones… ¡esto huele bien!';
+  } else if (fusion) {
+    introPose = 'happy_tongue';
+    introMsg = '¡Mira esa chispa! Aquí van mis bisociaciones.';
+  } else if (trimmed.length >= 5) {
+    introPose = 'curious_up';
+    introMsg = 'Ese hilo está interesante. Pulsa Fusionar y vemos qué sale.';
+  } else if (concepts) {
+    introPose = 'play_bow';
+    introMsg = 'Mira estos dos. ¿Qué chispa puedes encender entre ellos? 🐾';
+  }
+
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.header}>
@@ -92,17 +114,20 @@ export default function Connector() {
         keyboardVerticalOffset={20}
       >
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-          <View style={styles.introRow}>
-            <Mascot pose="play_bow" size={90} />
-            <Text style={styles.intro}>
-              Dos conceptos que parecen no tener nada que ver. Tu trabajo: encontrar la chispa.
-            </Text>
-          </View>
+          <MascotBubble
+            pose={introPose}
+            message={introMsg}
+            size={90}
+            variant="cream"
+            style={{ marginBottom: 18 }}
+            testID="connector-mascot-bubble"
+          />
 
           {loading ? (
             <View style={styles.center}>
-              <ActivityIndicator color={COLORS.violet} size="large" />
+              <Mascot pose="sleepy_curl" size={130} />
               <Text style={styles.loading}>Buscando conceptos lejanos…</Text>
+              <ActivityIndicator color={COLORS.violet} size="small" />
             </View>
           ) : concepts ? (
             <>
@@ -143,7 +168,7 @@ export default function Connector() {
               {fusion && (
                 <View style={styles.fusionResult} testID="connector-result">
                   <View style={styles.fusionHeader}>
-                    <Mascot pose="happy_tongue" size={60} />
+                    <Mascot pose="running" size={64} bounce />
                     <Text style={styles.fusionTitle}>Bisociaciones</Text>
                   </View>
                   {fusion.fusions.map((f, i) => (

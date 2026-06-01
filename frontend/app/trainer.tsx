@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { ChevronLeft, Send, RefreshCw } from 'lucide-react-native';
 import LevelBadge from '../src/components/LevelBadge';
-import Mascot from '../src/components/Mascot';
+import Mascot, { MascotPose } from '../src/components/Mascot';
 import { COLORS, xpProgress } from '../src/lib/levels';
 import {
   clearTrainerHistory,
@@ -145,12 +145,15 @@ export default function Trainer() {
           )}
 
           {messages.map((m, i) => (
-            <Bubble key={i} message={m} />
+            <Bubble key={i} message={m} index={i} />
           ))}
 
           {sending && (
-            <View style={[styles.bubble, styles.aiBubble]}>
-              <Text style={styles.typing}>…</Text>
+            <View style={styles.aiRow}>
+              <Mascot pose="curious_up" size={48} style={styles.aiAvatar} />
+              <View style={[styles.bubble, styles.aiBubble, styles.typingBubble]}>
+                <TypingDots />
+              </View>
             </View>
           )}
         </ScrollView>
@@ -189,7 +192,7 @@ const SUGGESTIONS = [
   'Cómo hacer mi trabajo más interesante',
 ];
 
-function Bubble({ message }: { message: Message }) {
+function Bubble({ message, index }: { message: Message; index: number }) {
   const scale = useRef(new Animated.Value(0.85)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -207,13 +210,43 @@ function Bubble({ message }: { message: Message }) {
       </Animated.View>
     );
   }
+  // Rotate AI mascot poses to keep the dog "alive" through the conversation
+  const aiPoses: MascotPose[] = ['side_sit', 'curious_up', 'play_bow', 'happy_tongue', 'eager_stand'];
+  const aiIndex = Math.floor(index / 2) % aiPoses.length;
+  const pose = aiPoses[aiIndex];
   return (
     <Animated.View style={[styles.aiRow, { transform: [{ scale }], opacity }]}>
-      <Mascot pose="side_sit" size={48} style={styles.aiAvatar} />
+      <Mascot pose={pose} size={48} style={styles.aiAvatar} />
       <View style={[styles.bubble, styles.aiBubble]}>
         <Text style={styles.bubbleText}>{message.content}</Text>
       </View>
     </Animated.View>
+  );
+}
+
+function TypingDots() {
+  const a = useRef(new Animated.Value(0.3)).current;
+  const b = useRef(new Animated.Value(0.3)).current;
+  const c = useRef(new Animated.Value(0.3)).current;
+  useEffect(() => {
+    const make = (v: Animated.Value, delay: number) =>
+      Animated.loop(
+        Animated.sequence([
+          Animated.delay(delay),
+          Animated.timing(v, { toValue: 1, duration: 360, useNativeDriver: true }),
+          Animated.timing(v, { toValue: 0.3, duration: 360, useNativeDriver: true }),
+        ]),
+      );
+    const anims = [make(a, 0), make(b, 150), make(c, 300)];
+    anims.forEach((x) => x.start());
+    return () => anims.forEach((x) => x.stop());
+  }, [a, b, c]);
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 4 }}>
+      <Animated.View style={[styles.dot, { opacity: a }]} />
+      <Animated.View style={[styles.dot, { opacity: b }]} />
+      <Animated.View style={[styles.dot, { opacity: c }]} />
+    </View>
   );
 }
 
@@ -308,6 +341,16 @@ const styles = StyleSheet.create({
   bubbleText: { fontSize: 15, lineHeight: 22, color: COLORS.text, fontWeight: '500' },
   userText: { color: COLORS.text },
   typing: { fontSize: 22, color: COLORS.orange, fontWeight: '900' },
+  typingBubble: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: COLORS.orange,
+  },
   inputBar: {
     flexDirection: 'row',
     alignItems: 'flex-end',

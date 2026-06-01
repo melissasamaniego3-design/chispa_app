@@ -1,8 +1,9 @@
 /**
  * Chispa - Mascota (perro naranja). Cambia de pose según el contexto.
+ * Anima suavemente cada cambio de pose (cross-fade + ligero bounce).
  */
-import React from 'react';
-import { Image, ImageStyle, StyleProp, View, ViewStyle } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Easing, Image, ImageStyle, StyleProp, View, ViewStyle } from 'react-native';
 
 export type MascotPose =
   | 'sit_alert'      // calmo, sentado de frente (default)
@@ -39,12 +40,70 @@ type Props = {
   style?: StyleProp<ViewStyle>;
   imageStyle?: StyleProp<ImageStyle>;
   testID?: string;
+  /** When true, plays a celebration bounce on mount/pose change. */
+  bounce?: boolean;
+  /** Disable animations entirely (e.g., for static decorative use). */
+  animated?: boolean;
 };
 
-export default function Mascot({ pose = 'sit_alert', size = 120, style, imageStyle, testID }: Props) {
+export default function Mascot({
+  pose = 'sit_alert',
+  size = 120,
+  style,
+  imageStyle,
+  testID,
+  bounce = false,
+  animated = true,
+}: Props) {
+  const opacity = useRef(new Animated.Value(1)).current;
+  const scale = useRef(new Animated.Value(1)).current;
+  const prevPose = useRef<MascotPose>(pose);
+
+  // Cross-fade + tiny pop when pose changes
+  useEffect(() => {
+    if (!animated) return;
+    if (prevPose.current === pose) return;
+    prevPose.current = pose;
+    opacity.setValue(0.25);
+    scale.setValue(0.86);
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 220,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+      Animated.spring(scale, {
+        toValue: 1,
+        friction: 5,
+        tension: 140,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [pose, animated, opacity, scale]);
+
+  // Celebration bounce
+  useEffect(() => {
+    if (!animated || !bounce) return;
+    Animated.sequence([
+      Animated.timing(scale, { toValue: 1.18, duration: 160, useNativeDriver: true }),
+      Animated.spring(scale, { toValue: 1, friction: 4, tension: 160, useNativeDriver: true }),
+    ]).start();
+  }, [bounce, animated, scale]);
+
   return (
-    <View testID={testID ?? `mascot-${pose}`} style={[{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }, style]}>
-      <Image source={SOURCES[pose]} style={[{ width: size, height: size, resizeMode: 'contain' }, imageStyle]} />
+    <View
+      testID={testID ?? `mascot-${pose}`}
+      style={[{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }, style]}
+    >
+      <Animated.Image
+        source={SOURCES[pose]}
+        style={[
+          { width: size, height: size, transform: [{ scale }], opacity },
+          imageStyle,
+        ]}
+        resizeMode="contain"
+      />
     </View>
   );
 }
@@ -53,7 +112,8 @@ export function MascotLogo({ width = 220, style }: { width?: number; style?: Sty
   return (
     <Image
       source={require('../../assets/mascot/logo.png')}
-      style={[{ width, height: width * 0.46, resizeMode: 'contain' }, style]}
+      style={[{ width, height: width * 0.46 }, style]}
+      resizeMode="contain"
     />
   );
 }
@@ -62,7 +122,8 @@ export function MascotHero({ width = 280, style }: { width?: number; style?: Sty
   return (
     <Image
       source={require('../../assets/mascot/hero_logo.png')}
-      style={[{ width, height: width * 1.43, resizeMode: 'contain' }, style]}
+      style={[{ width, height: width * 1.43 }, style]}
+      resizeMode="contain"
     />
   );
 }
