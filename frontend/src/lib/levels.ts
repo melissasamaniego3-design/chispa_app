@@ -67,11 +67,11 @@ export const COLORS = {
   greenDark: '#46A302',
 
   // surfaces
-  bg: '#FFF8EE',
+  bg: '#FFFFFF',
   surface: '#FFFFFF',
-  surfaceWarm: '#FFF1DC',
+  surfaceWarm: '#FFF6E8',
   text: '#1A1410',
   muted: '#7E6B5B',
-  border: '#EADBC8',
+  border: '#E8E2DA',
   borderStrong: '#1A1410',
 };
