@@ -75,3 +75,13 @@ export const COLORS = {
   border: '#E8E2DA',
   borderStrong: '#1A1410',
 };
+
+// Typography tokens — apply via { fontFamily: FONTS.heading } etc.
+export const FONTS = {
+  heading: 'Fredoka_700Bold',       // chunky rounded for titles, wordmark, buttons
+  headingMd: 'Fredoka_600SemiBold', // mid-weight for sub-titles
+  display: 'Fredoka_700Bold',       // big display
+  body: 'Nunito_600SemiBold',       // default body
+  bodyBold: 'Nunito_800ExtraBold',  // emphasis
+  bodyRegular: 'Nunito_400Regular', // muted body
+};

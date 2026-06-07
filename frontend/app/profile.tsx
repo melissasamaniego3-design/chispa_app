@@ -15,7 +15,7 @@ import LevelBadge from '../src/components/LevelBadge';
 import XPProgressBar from '../src/components/XPProgressBar';
 import GamifiedButton from '../src/components/GamifiedButton';
 import Mascot from '../src/components/Mascot';
-import { COLORS, LEVELS, PURPOSES, xpProgress, LevelId, levelToPose } from '../src/lib/levels';
+import { COLORS, FONTS, LEVELS, PURPOSES, xpProgress, LevelId, levelToPose } from '../src/lib/levels';
 import { loadProfile, Profile, resetProfile, updateProfile } from '../src/lib/storage';
 import { ensureDailyReminder } from '../src/lib/notifications';
 
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.borderStrong,
     borderBottomWidth: 4,
   },
-  headerTitle: { flex: 1, fontSize: 18, fontWeight: '900', color: COLORS.text, marginLeft: 8 },
+  headerTitle: { fontFamily: FONTS.heading,  flex: 1, fontSize: 18, fontWeight: '900', color: COLORS.text, marginLeft: 8 },
   scroll: { padding: 20, paddingBottom: 60, gap: 16 },
   heroCard: {
     backgroundColor: COLORS.surface,
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     padding: 18,
   },
   heroRow: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  heroName: { fontSize: 28, fontWeight: '900', color: COLORS.text, marginTop: 8, letterSpacing: -0.5 },
+  heroName: { fontFamily: FONTS.heading,  fontSize: 28, fontWeight: '900', color: COLORS.text, marginTop: 8, letterSpacing: -0.5 },
   heroTagline: { fontSize: 13, color: COLORS.muted, fontWeight: '600' },
   statsRow: { flexDirection: 'row', gap: 12 },
   stat: {
@@ -234,9 +234,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 5,
     alignItems: 'center',
   },
-  statValue: { fontSize: 28, fontWeight: '900', color: COLORS.text },
+  statValue: { fontFamily: FONTS.heading,  fontSize: 28, fontWeight: '900', color: COLORS.text },
   statLabel: { fontSize: 11, fontWeight: '900', letterSpacing: 1.2, color: COLORS.text, marginTop: 2 },
-  sectionTitle: { fontSize: 13, fontWeight: '900', letterSpacing: 1.4, color: COLORS.muted, textTransform: 'uppercase', marginTop: 8 },
+  sectionTitle: { fontFamily: FONTS.heading,  fontSize: 13, fontWeight: '900', letterSpacing: 1.4, color: COLORS.muted, textTransform: 'uppercase', marginTop: 8 },
   levels: { gap: 10 },
   levelRow: {
     flexDirection: 'row',
@@ -257,8 +257,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.borderStrong,
   },
-  levelDotText: { fontSize: 20, fontWeight: '900', color: COLORS.text },
-  levelName: { fontSize: 16, fontWeight: '900', color: COLORS.text },
+  levelDotText: { fontFamily: FONTS.heading,  fontSize: 20, fontWeight: '900', color: COLORS.text },
+  levelName: { fontFamily: FONTS.heading,  fontSize: 16, fontWeight: '900', color: COLORS.text },
   levelTag: { fontSize: 12, color: COLORS.muted, fontWeight: '600' },
   activePill: {
     backgroundColor: COLORS.orange,
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   purposeEmoji: { fontSize: 24 },
-  purposeLabel: { fontSize: 13, fontWeight: '800', color: COLORS.text, textAlign: 'center' },
+  purposeLabel: { fontFamily: FONTS.heading,  fontSize: 13, fontWeight: '800', color: COLORS.text, textAlign: 'center' },
   notif: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.borderStrong,
     borderBottomWidth: 4,
   },
-  notifTitle: { fontSize: 15, fontWeight: '900', color: COLORS.text },
+  notifTitle: { fontFamily: FONTS.heading,  fontSize: 15, fontWeight: '900', color: COLORS.text },
   notifSub: { fontSize: 12, color: COLORS.muted, fontWeight: '600' },
   footer: { textAlign: 'center', color: COLORS.muted, fontSize: 12, marginTop: 30, fontWeight: '700' },
 });

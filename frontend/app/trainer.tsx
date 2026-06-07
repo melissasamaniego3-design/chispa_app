@@ -16,7 +16,7 @@ import { useRouter } from 'expo-router';
 import { ChevronLeft, Send, RefreshCw } from 'lucide-react-native';
 import LevelBadge from '../src/components/LevelBadge';
 import Mascot, { MascotPose } from '../src/components/Mascot';
-import { COLORS, xpProgress } from '../src/lib/levels';
+import { COLORS, FONTS, xpProgress } from '../src/lib/levels';
 import {
   clearTrainerHistory,
   loadProfile,
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.borderStrong,
     borderBottomWidth: 4,
   },
-  headerTitle: { fontSize: 18, fontWeight: '900', color: COLORS.text },
+  headerTitle: { fontFamily: FONTS.heading,  fontSize: 18, fontWeight: '900', color: COLORS.text },
   headerSub: { fontSize: 12, color: COLORS.muted, fontWeight: '700' },
   resetBtn: {
     width: 36,
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   aiAvatar: {
     marginBottom: -4,
   },
-  emptyTitle: { fontSize: 24, fontWeight: '900', color: COLORS.text },
+  emptyTitle: { fontFamily: FONTS.heading,  fontSize: 24, fontWeight: '900', color: COLORS.text },
   emptyText: { fontSize: 15, lineHeight: 22, color: COLORS.muted },
   suggestions: { gap: 8, marginTop: 8, alignSelf: 'stretch' },
   suggestion: {

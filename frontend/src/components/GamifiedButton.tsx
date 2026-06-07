@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Animated, Pressable, StyleSheet, Text, ViewStyle, TextStyle, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { COLORS } from '../lib/levels';
+import { COLORS, FONTS } from '../lib/levels';
 
 type Variant = 'yellow' | 'coral' | 'violet' | 'green' | 'ghost' | 'orange' | 'purple' | 'red';
 
@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 17,
+    fontFamily: FONTS.heading,
     fontWeight: '900',
     letterSpacing: 0.3,
     textTransform: 'uppercase',

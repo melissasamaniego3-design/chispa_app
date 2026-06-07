@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { COLORS, LEVELS, LevelId } from '../lib/levels';
+import { COLORS, FONTS, LEVELS, LevelId } from '../lib/levels';
 
 export default function LevelBadge({ level, compact }: { level: LevelId; compact?: boolean }) {
   const cfg = LEVELS[level];
@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
   compact: { paddingHorizontal: 10, paddingVertical: 6, gap: 4 },
   bolt: { fontSize: 14, color: COLORS.text },
   text: {
+    fontFamily: FONTS.heading,
     fontWeight: '900',
     fontSize: 14,
     color: COLORS.text,

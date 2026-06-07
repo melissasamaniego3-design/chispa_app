@@ -18,7 +18,7 @@ import GamifiedButton from '../src/components/GamifiedButton';
 import LevelBadge from '../src/components/LevelBadge';
 import Mascot, { MascotPose } from '../src/components/Mascot';
 import MascotBubble from '../src/components/MascotBubble';
-import { COLORS, xpProgress } from '../src/lib/levels';
+import { COLORS, FONTS, xpProgress } from '../src/lib/levels';
 import { applyChallengeCompletion, loadProfile, Profile, saveProfile } from '../src/lib/storage';
 import { api, Concepts, Fusion } from '../src/lib/api';
 
@@ -56,17 +56,20 @@ export default function Connector() {
 
   const fuse = async () => {
     if (!profile || !concepts || fusing) return;
+    const idea = userIdea.trim();
+    if (idea.length < 10) {
+      Alert.alert('Necesito tu chispa primero 🐾', 'Escribe al menos una frase con tu propia conexión antes de fusionar. ¡Esa es la parte importante!');
+      return;
+    }
     setFusing(true);
     try {
       const level = xpProgress(profile.xp).level;
-      const f = await api.conceptsFuse(level, profile.purpose, concepts.concept_a, concepts.concept_b, userIdea.trim() || undefined);
+      const f = await api.conceptsFuse(level, profile.purpose, concepts.concept_a, concepts.concept_b, idea);
       setFusion(f);
-      // small XP reward when user fuses with their idea
-      if (userIdea.trim().length > 5) {
-        const updated = applyChallengeCompletion(profile, 15);
-        await saveProfile(updated);
-        setProfile(updated);
-      }
+      // Always grant XP — the user's fusion is mandatory now
+      const updated = applyChallengeCompletion(profile, 15);
+      await saveProfile(updated);
+      setProfile(updated);
     } catch {
       Alert.alert('Ups', 'No pude fusionar. Inténtalo de nuevo.');
     } finally {
@@ -89,13 +92,16 @@ export default function Connector() {
     introMsg = 'Olfateando conexiones… ¡esto huele bien!';
   } else if (fusion) {
     introPose = 'happy_tongue';
-    introMsg = '¡Mira esa chispa! Aquí van mis bisociaciones.';
-  } else if (trimmed.length >= 5) {
+    introMsg = '¡Mira esa chispa! +15 XP. Aquí van mis bisociaciones.';
+  } else if (trimmed.length >= 10) {
     introPose = 'curious_up';
-    introMsg = 'Ese hilo está interesante. Pulsa Fusionar y vemos qué sale.';
+    introMsg = '¡Buena fusión! Pulsa Fusionar y vemos qué sale juntos.';
+  } else if (trimmed.length > 0) {
+    introPose = 'eager_stand';
+    introMsg = `Voy escuchando… escribe un poco más (${trimmed.length}/10).`;
   } else if (concepts) {
     introPose = 'play_bow';
-    introMsg = 'Mira estos dos. ¿Qué chispa puedes encender entre ellos? 🐾';
+    introMsg = 'Mira estos dos. Escribe TU chispa antes de fusionar. 🐾';
   }
 
   return (
@@ -144,23 +150,28 @@ export default function Connector() {
                 <Text style={styles.shuffleText}>Otros conceptos</Text>
               </Pressable>
 
-              <Text style={styles.label}>Tu fusión (opcional)</Text>
+              <Text style={styles.label}>Tu fusión <Text style={styles.labelRequired}>· requerida</Text></Text>
               <TextInput
                 testID="connector-input"
                 style={styles.input}
-                placeholder="¿Qué emerge cuando los juntas? Atrévete…"
+                placeholder="¿Qué emerge cuando los juntas? Escribe tu propia chispa…"
                 placeholderTextColor={COLORS.muted}
                 value={userIdea}
                 onChangeText={setUserIdea}
                 multiline
                 editable={!fusing}
               />
+              <Text style={styles.helper}>
+                {trimmed.length < 10
+                  ? `Escribe tu propia conexión antes de fusionar (mín. 10 caracteres · ${trimmed.length}/10)`
+                  : '¡Listo! Pulsa Fusionar para ver mis bisociaciones y ganar +15 XP 🔥'}
+              </Text>
 
               <GamifiedButton
                 label={fusing ? 'Fusionando…' : 'Fusionar'}
                 variant="violet"
                 onPress={fuse}
-                disabled={fusing}
+                disabled={fusing || trimmed.length < 10}
                 testID="connector-fuse"
                 style={{ marginTop: 14 }}
               />
@@ -233,7 +244,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.borderStrong,
     borderBottomWidth: 4,
   },
-  headerTitle: { flex: 1, fontSize: 18, fontWeight: '900', color: COLORS.text, marginLeft: 8 },
+  headerTitle: { fontFamily: FONTS.heading,  flex: 1, fontSize: 18, fontWeight: '900', color: COLORS.text, marginLeft: 8 },
   scroll: { padding: 20, paddingBottom: 60 },
   introRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 18 },
   intro: { flex: 1, fontSize: 15, color: COLORS.muted, lineHeight: 22 },
@@ -255,7 +266,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  conceptText: { fontSize: 22, fontWeight: '900', color: COLORS.text, textAlign: 'center', letterSpacing: -0.3 },
+  conceptText: { fontFamily: FONTS.heading,  fontSize: 22, fontWeight: '900', color: COLORS.text, textAlign: 'center', letterSpacing: -0.3 },
   fusionIcon: {
     width: 46,
     height: 46,
@@ -291,6 +302,17 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     marginBottom: 8,
   },
+  labelRequired: {
+    color: COLORS.coral,
+    fontWeight: '900',
+    letterSpacing: 1.2,
+  },
+  helper: {
+    marginTop: 8,
+    fontSize: 13,
+    color: COLORS.muted,
+    fontWeight: '600',
+  },
   input: {
     backgroundColor: COLORS.surface,
     borderRadius: 18,
@@ -314,7 +336,7 @@ const styles = StyleSheet.create({
     padding: 18,
   },
   fusionHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
-  fusionTitle: { fontSize: 20, fontWeight: '900', color: COLORS.orange },
+  fusionTitle: { fontFamily: FONTS.heading,  fontSize: 20, fontWeight: '900', color: COLORS.orange },
   fusionItem: {
     flexDirection: 'row',
     gap: 12,
@@ -345,6 +367,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.borderStrong,
   },
-  inviteLabel: { fontSize: 11, fontWeight: '900', letterSpacing: 1.2, color: COLORS.yellow, marginBottom: 4 },
+  inviteLabel: { fontFamily: FONTS.heading,  fontSize: 11, fontWeight: '900', letterSpacing: 1.2, color: COLORS.yellow, marginBottom: 4 },
   inviteText: { fontSize: 15, color: '#fff', fontWeight: '600', lineHeight: 21 },
 });

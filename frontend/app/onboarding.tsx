@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import GamifiedButton from '../src/components/GamifiedButton';
 import Mascot, { MascotHero, MascotLogo } from '../src/components/Mascot';
-import { COLORS, PURPOSES } from '../src/lib/levels';
+import { COLORS, FONTS, PURPOSES } from '../src/lib/levels';
 import { loadProfile, saveProfile } from '../src/lib/storage';
 import { ensureDailyReminder } from '../src/lib/notifications';
 
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     textAlign: 'center',
   },
-  h2: { fontSize: 28, fontWeight: '900', color: COLORS.text, lineHeight: 34, textAlign: 'center' },
+  h2: { fontFamily: FONTS.heading,  fontSize: 28, fontWeight: '900', color: COLORS.text, lineHeight: 34, textAlign: 'center' },
   subtitle: { fontSize: 17, color: COLORS.muted, lineHeight: 24, marginTop: 12, textAlign: 'center' },
   levelRow: {
     flexDirection: 'row',
@@ -221,8 +221,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.borderStrong,
   },
-  levelNumText: { fontSize: 22, fontWeight: '900', color: COLORS.text },
-  levelName: { fontSize: 18, fontWeight: '900', color: COLORS.text },
+  levelNumText: { fontFamily: FONTS.heading,  fontSize: 22, fontWeight: '900', color: COLORS.text },
+  levelName: { fontFamily: FONTS.heading,  fontSize: 18, fontWeight: '900', color: COLORS.text },
   levelDesc: { fontSize: 13, color: COLORS.muted, marginTop: 2 },
   purposeCard: {
     flexDirection: 'row',
@@ -235,5 +235,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: 5,
   },
   purposeEmoji: { fontSize: 32 },
-  purposeLabel: { fontSize: 18, fontWeight: '900', color: COLORS.text },
+  purposeLabel: { fontFamily: FONTS.heading,  fontSize: 18, fontWeight: '900', color: COLORS.text },
 });

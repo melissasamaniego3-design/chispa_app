@@ -15,7 +15,7 @@ import LevelBadge from '../src/components/LevelBadge';
 import StreakBadge from '../src/components/StreakBadge';
 import XPProgressBar from '../src/components/XPProgressBar';
 import Mascot, { MascotLogo } from '../src/components/Mascot';
-import { COLORS, LEVELS, levelToPose, xpProgress } from '../src/lib/levels';
+import { COLORS, FONTS, LEVELS, levelToPose, xpProgress } from '../src/lib/levels';
 import { loadProfile, Profile, todayStr } from '../src/lib/storage';
 
 export default function Home() {
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     color: COLORS.orange,
     textTransform: 'uppercase',
   },
-  heroTitle: { fontSize: 34, fontWeight: '900', color: COLORS.text, marginTop: 4 },
+  heroTitle: { fontFamily: FONTS.heading,  fontSize: 34, fontWeight: '900', color: COLORS.text, marginTop: 4 },
   heroTagline: { fontSize: 14, color: COLORS.muted, marginTop: 2 },
   section: {
     borderRadius: 22,
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   },
   sectionBig: { minHeight: 130, borderBottomWidth: 7 },
   sectionContent: { flex: 1, paddingRight: 12 },
-  sectionTitle: { fontSize: 22, fontWeight: '900', letterSpacing: -0.3 },
+  sectionTitle: { fontFamily: FONTS.heading,  fontSize: 22, fontWeight: '900', letterSpacing: -0.3 },
   sectionTitleBig: { fontSize: 28 },
   sectionSubtitle: { fontSize: 14, marginTop: 4, fontWeight: '600' },
   iconWrap: {

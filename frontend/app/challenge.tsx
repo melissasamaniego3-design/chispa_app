@@ -19,7 +19,7 @@ import GamifiedButton from '../src/components/GamifiedButton';
 import LevelBadge from '../src/components/LevelBadge';
 import Mascot, { MascotPose } from '../src/components/Mascot';
 import MascotBubble from '../src/components/MascotBubble';
-import { COLORS, xpProgress } from '../src/lib/levels';
+import { COLORS, FONTS, xpProgress } from '../src/lib/levels';
 import {
   applyChallengeCompletion,
   loadCachedChallenge,
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.borderStrong,
     borderBottomWidth: 4,
   },
-  headerTitle: { flex: 1, fontSize: 20, fontWeight: '900', color: COLORS.text, marginLeft: 8 },
+  headerTitle: { flex: 1, fontSize: 20, fontFamily: FONTS.heading, fontWeight: '900', color: COLORS.text, marginLeft: 8 },
   scroll: { padding: 20, paddingBottom: 60 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
   loading: { color: COLORS.muted, fontSize: 14, fontWeight: '700' },
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: COLORS.text,
   },
-  promptTitle: { fontSize: 24, fontWeight: '900', color: COLORS.text, marginBottom: 8 },
+  promptTitle: { fontSize: 24, fontFamily: FONTS.heading, fontWeight: '900', color: COLORS.text, marginBottom: 8 },
   promptText: { fontSize: 17, lineHeight: 24, color: COLORS.text, fontWeight: '500' },
   hintBtn: {
     marginTop: 14,
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.borderStrong,
     borderBottomWidth: 4,
   },
-  celebrationText: { fontSize: 16, color: COLORS.text, fontWeight: '900' },
+  celebrationText: { fontFamily: FONTS.heading,  fontSize: 16, color: COLORS.text, fontWeight: '900' },
   responseBubble: {
     backgroundColor: COLORS.surface,
     borderRadius: 18,
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   },
   feedbackHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
   feedbackBolt: { fontSize: 20 },
-  feedbackTitle: { flex: 1, fontSize: 18, fontWeight: '900', color: COLORS.orange },
+  feedbackTitle: { flex: 1, fontSize: 18, fontFamily: FONTS.heading, fontWeight: '900', color: COLORS.orange },
   xpPill: {
     backgroundColor: COLORS.green,
     paddingHorizontal: 12,
