@@ -112,7 +112,7 @@ export function MascotLogo({ width = 220, style }: { width?: number; style?: Sty
   return (
     <Image
       source={require('../../assets/mascot/logo.png')}
-      style={[{ width, height: width * 0.46 }, style]}
+      style={[{ width, height: width * 0.32 }, style]}
       resizeMode="contain"
     />
   );
