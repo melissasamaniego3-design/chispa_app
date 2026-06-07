@@ -150,7 +150,7 @@ export default function Connector() {
                 <Text style={styles.shuffleText}>Otros conceptos</Text>
               </Pressable>
 
-              <Text style={styles.label}>Tu fusión <Text style={styles.labelRequired}>· requerida</Text></Text>
+              <Text style={styles.label}>Tu fusión</Text>
               <TextInput
                 testID="connector-input"
                 style={styles.input}

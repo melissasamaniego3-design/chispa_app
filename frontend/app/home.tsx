@@ -65,18 +65,16 @@ export default function Home() {
         {/* Mascot + Logo Hero */}
         <View style={styles.heroBlock}>
           <MascotLogo width={160} />
-          <View style={styles.mascotBubble}>
-            <Mascot pose={heroPose} size={170} testID="home-mascot" />
-            <View style={styles.speechBubble}>
-              <Text style={styles.speechText} numberOfLines={3}>
-                {challengeReady
-                  ? '¡Hey! Hay un reto fresquito esperándote 🐾'
-                  : profile.streak > 0
-                  ? `¡${profile.streak} día${profile.streak > 1 ? 's' : ''} seguidos! Sigamos.`
-                  : '¿Empezamos? Tira de mi correa.'}
-              </Text>
-              <View style={styles.speechTail} />
-            </View>
+          <Mascot pose={heroPose} size={170} testID="home-mascot" />
+          <View style={styles.speechBubble}>
+            <View style={styles.speechTail} />
+            <Text style={styles.speechText} numberOfLines={3}>
+              {challengeReady
+                ? '¡Hey! Hay un reto fresquito esperándote 🐾'
+                : profile.streak > 0
+                ? `¡${profile.streak} día${profile.streak > 1 ? 's' : ''} seguidos! Sigamos.`
+                : '¿Empezamos? Tira de mi correa.'}
+            </Text>
           </View>
         </View>
 
@@ -202,37 +200,32 @@ const styles = StyleSheet.create({
   },
   heroBlock: {
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
     marginVertical: 6,
   },
-  mascotBubble: {
-    width: '100%',
-    alignItems: 'center',
-    position: 'relative',
-  },
   speechBubble: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    maxWidth: 180,
+    alignSelf: 'center',
+    maxWidth: 320,
     backgroundColor: COLORS.surface,
     borderWidth: 2,
     borderColor: COLORS.borderStrong,
     borderBottomWidth: 4,
     borderRadius: 18,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginTop: 14,
   },
-  speechText: { fontSize: 13, fontWeight: '700', color: COLORS.text, lineHeight: 18 },
+  speechText: { fontSize: 14, fontWeight: '700', color: COLORS.text, lineHeight: 20, textAlign: 'center' },
   speechTail: {
     position: 'absolute',
-    bottom: -10,
-    left: 18,
+    top: -9,
+    left: '50%',
+    marginLeft: -8,
     width: 14,
     height: 14,
     backgroundColor: COLORS.surface,
-    borderRightWidth: 2,
-    borderBottomWidth: 2,
+    borderLeftWidth: 2,
+    borderTopWidth: 2,
     borderColor: COLORS.borderStrong,
     transform: [{ rotate: '45deg' }],
   },

@@ -57,6 +57,26 @@ export default function ProfileScreen() {
     setProfile(next);
   };
 
+  // Modo prueba: salta a un nivel específico (ajusta XP al umbral exacto)
+  const jumpToLevel = (lvl: LevelId) => {
+    const xpFor: Record<LevelId, number> = { 1: 0, 2: 150, 3: 450, 4: 1000 };
+    const target = xpFor[lvl];
+    Alert.alert(
+      `Probar nivel ${LEVELS[lvl].name}`,
+      `Esto pondrá tu XP en ${target} para que veas la experiencia. Puedes volver con "Reiniciar progreso".`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Ir',
+          onPress: async () => {
+            const next = await updateProfile({ xp: target });
+            setProfile(next);
+          },
+        },
+      ]
+    );
+  };
+
   if (!profile) return <View style={styles.safe} />;
   const xp = xpProgress(profile.xp);
 
@@ -146,6 +166,39 @@ export default function ProfileScreen() {
           testID="profile-reset"
           style={{ marginTop: 24 }}
         />
+
+        {/* Modo prueba — saltar a otros niveles para probar la experiencia */}
+        <View style={styles.testMode}>
+          <Text style={styles.sectionTitle}>🧪 Modo prueba</Text>
+          <Text style={styles.testHelp}>
+            Salta a cualquier nivel para probar la experiencia (Llama, Hoguera, Infierno).
+            La IA adapta retos, preguntas y conceptos al nivel elegido.
+          </Text>
+          <View style={styles.testGrid}>
+            {([1, 2, 3, 4] as LevelId[]).map((id) => {
+              const cfg = LEVELS[id];
+              const active = id === xp.level;
+              return (
+                <Pressable
+                  key={id}
+                  testID={`test-jump-${id}`}
+                  onPress={() => jumpToLevel(id)}
+                  style={[
+                    styles.testPill,
+                    {
+                      backgroundColor: active ? cfg.color : COLORS.surface,
+                      borderColor: cfg.color,
+                    },
+                  ]}
+                >
+                  <Text style={styles.testPillNum}>{id}</Text>
+                  <Text style={styles.testPillName}>{cfg.name}</Text>
+                  {active && <Text style={styles.testPillActive}>· activo</Text>}
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
 
         <Text style={styles.footer}>Chispa · v1.0 · Hecho con curiosidad</Text>
       </ScrollView>
@@ -300,4 +353,40 @@ const styles = StyleSheet.create({
   notifTitle: { fontFamily: FONTS.heading,  fontSize: 15, fontWeight: '900', color: COLORS.text },
   notifSub: { fontSize: 12, color: COLORS.muted, fontWeight: '600' },
   footer: { textAlign: 'center', color: COLORS.muted, fontSize: 12, marginTop: 30, fontWeight: '700' },
+
+  // Modo prueba
+  testMode: {
+    marginTop: 24,
+    backgroundColor: '#FFFEF5',
+    borderRadius: 18,
+    borderWidth: 2,
+    borderColor: COLORS.borderStrong,
+    borderBottomWidth: 5,
+    padding: 16,
+    gap: 10,
+  },
+  testHelp: { fontSize: 13, color: COLORS.muted, lineHeight: 19 },
+  testGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 6 },
+  testPill: {
+    flexGrow: 1,
+    minWidth: '47%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 14,
+    borderWidth: 2,
+    borderBottomWidth: 4,
+  },
+  testPillNum: {
+    fontFamily: FONTS.heading,
+    fontSize: 18,
+    fontWeight: '900',
+    color: COLORS.text,
+    width: 22,
+    textAlign: 'center',
+  },
+  testPillName: { fontFamily: FONTS.heading, fontSize: 14, fontWeight: '900', color: COLORS.text },
+  testPillActive: { fontSize: 11, color: COLORS.muted, fontWeight: '700' },
 });
