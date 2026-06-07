@@ -161,7 +161,7 @@ export default function Connector() {
                 multiline
                 editable={!fusing}
               />
-              <Text style={styles.helper}>
+              <Text style={[styles.helper, trimmed.length < 10 && styles.helperWarn]}>
                 {trimmed.length < 10
                   ? `Escribe tu propia conexión antes de fusionar (mín. 10 caracteres · ${trimmed.length}/10)`
                   : '¡Listo! Pulsa Fusionar para ver mis bisociaciones y ganar +15 XP 🔥'}
@@ -312,6 +312,10 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.muted,
     fontWeight: '600',
+  },
+  helperWarn: {
+    color: COLORS.coral,
+    fontWeight: '700',
   },
   input: {
     backgroundColor: COLORS.surface,
