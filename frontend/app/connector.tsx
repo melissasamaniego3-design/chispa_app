@@ -18,8 +18,19 @@ import GamifiedButton from '../src/components/GamifiedButton';
 import LevelBadge from '../src/components/LevelBadge';
 import Mascot, { MascotPose } from '../src/components/Mascot';
 import MascotBubble from '../src/components/MascotBubble';
+import { LimitReachedCard, UsageBadge } from '../src/components/UsageLock';
 import { COLORS, FONTS, xpProgress } from '../src/lib/levels';
-import { applyChallengeCompletion, loadProfile, Profile, saveProfile } from '../src/lib/storage';
+import {
+  applyChallengeCompletion,
+  bumpUsage,
+  canUse,
+  FREE_LIMITS,
+  getRemaining,
+  loadProfile,
+  Profile,
+  saveProfile,
+  XP_REWARDS,
+} from '../src/lib/storage';
 import { api, Concepts, Fusion } from '../src/lib/api';
 
 export default function Connector() {
@@ -61,15 +72,23 @@ export default function Connector() {
       Alert.alert('Necesito tu chispa primero 🐾', 'Escribe al menos una frase con tu propia conexión antes de fusionar. ¡Esa es la parte importante!');
       return;
     }
+    if (!canUse(profile, 'fusion')) {
+      Alert.alert(
+        'Has usado tus 5 fusiones de hoy 🐾',
+        'Mañana se renueva o pásate a Chispa Pro para fusionar sin límite.',
+      );
+      return;
+    }
     setFusing(true);
     try {
       const level = xpProgress(profile.xp).level;
       const f = await api.conceptsFuse(level, profile.purpose, concepts.concept_a, concepts.concept_b, idea);
       setFusion(f);
-      // Always grant XP — the user's fusion is mandatory now
-      const updated = applyChallengeCompletion(profile, 15);
+      // Grant XP and bump usage
+      const updated = applyChallengeCompletion(profile, XP_REWARDS.fusion);
       await saveProfile(updated);
-      setProfile(updated);
+      const updated2 = await bumpUsage('fusion');
+      setProfile(updated2);
     } catch {
       Alert.alert('Ups', 'No pude fusionar. Inténtalo de nuevo.');
     } finally {
@@ -79,6 +98,8 @@ export default function Connector() {
 
   if (!profile) return <View style={styles.safe} />;
   const level = xpProgress(profile.xp).level;
+  const fusionsRemaining = getRemaining(profile, 'fusion');
+  const fusionLimitReached = fusionsRemaining === 0;
 
   // Reactive mascot for the intro/state
   const trimmed = userIdea.trim();
@@ -120,6 +141,15 @@ export default function Connector() {
         keyboardVerticalOffset={20}
       >
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+          <View style={{ alignSelf: 'flex-end', marginBottom: 8 }}>
+            <UsageBadge
+              used={FREE_LIMITS.fusionsPerDay - fusionsRemaining}
+              total={FREE_LIMITS.fusionsPerDay}
+              label="fusiones hoy"
+              testID="connector-usage"
+            />
+          </View>
+
           <MascotBubble
             pose={introPose}
             message={introMsg}
@@ -171,10 +201,20 @@ export default function Connector() {
                 label={fusing ? 'Fusionando…' : 'Fusionar'}
                 variant="violet"
                 onPress={fuse}
-                disabled={fusing || trimmed.length < 10}
+                disabled={fusing || trimmed.length < 10 || fusionLimitReached}
                 testID="connector-fuse"
                 style={{ marginTop: 14 }}
               />
+
+              {fusionLimitReached && !fusion && (
+                <View style={{ marginTop: 16 }}>
+                  <LimitReachedCard
+                    title="Has usado tus 5 fusiones de hoy"
+                    message="Mañana se renueva automáticamente. ¿Quieres fusiones ilimitadas con Chispa Pro?"
+                    testID="connector-limit-card"
+                  />
+                </View>
+              )}
 
               {fusion && (
                 <View style={styles.fusionResult} testID="connector-result">

@@ -16,9 +16,14 @@ import { useRouter } from 'expo-router';
 import { ChevronLeft, Send, RefreshCw } from 'lucide-react-native';
 import LevelBadge from '../src/components/LevelBadge';
 import Mascot, { MascotPose } from '../src/components/Mascot';
+import { LimitReachedCard, UsageBadge } from '../src/components/UsageLock';
 import { COLORS, FONTS, xpProgress } from '../src/lib/levels';
 import {
+  bumpUsage,
+  canUse,
   clearTrainerHistory,
+  FREE_LIMITS,
+  getRemaining,
   loadProfile,
   loadTrainerHistory,
   Profile,
@@ -52,6 +57,13 @@ export default function Trainer() {
 
   const send = async () => {
     if (!profile || sending || input.trim().length === 0) return;
+    if (!canUse(profile, 'trainer')) {
+      Alert.alert(
+        'Has usado tus 5 mensajes de hoy 🐾',
+        'Mañana se renueva o pásate a Chispa Pro para chatear sin límite.',
+      );
+      return;
+    }
     const userMsg: Message = { role: 'user', content: input.trim(), ts: Date.now() };
     const newMsgs = [...messages, userMsg];
     setMessages(newMsgs);
@@ -67,6 +79,9 @@ export default function Trainer() {
       const final = [...newMsgs, ai];
       setMessages(final);
       await saveTrainerHistory(final);
+      // bump usage AFTER successful exchange so failed requests don't count
+      const updated = await bumpUsage('trainer');
+      setProfile(updated);
     } catch {
       Alert.alert('Ups', 'No pude conectar. Inténtalo de nuevo.');
       setMessages(messages);
@@ -92,6 +107,8 @@ export default function Trainer() {
 
   if (!profile) return <View style={styles.safe} />;
   const level = xpProgress(profile.xp).level;
+  const remaining = getRemaining(profile, 'trainer');
+  const limitReached = remaining === 0;
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -101,7 +118,10 @@ export default function Trainer() {
         </Pressable>
         <View style={{ flex: 1, marginLeft: 8 }}>
           <Text style={styles.headerTitle}>Entrenador de ideas</Text>
-          <Text style={styles.headerSub}>Coach socrático · Nv {level}</Text>
+          <View style={styles.headerSubRow}>
+            <Text style={styles.headerSub}>Coach socrático · Nv {level}</Text>
+            <UsageBadge used={FREE_LIMITS.trainerMessagesPerDay - remaining} total={FREE_LIMITS.trainerMessagesPerDay} testID="trainer-usage" />
+          </View>
         </View>
         {messages.length > 0 && (
           <Pressable onPress={reset} testID="trainer-reset" style={styles.resetBtn}>
@@ -158,29 +178,39 @@ export default function Trainer() {
           )}
         </ScrollView>
 
-        <View style={styles.inputBar}>
-          <TextInput
-            testID="trainer-input"
-            style={styles.input}
-            placeholder="Escribe tu idea o pregunta…"
-            placeholderTextColor={COLORS.muted}
-            value={input}
-            onChangeText={setInput}
-            multiline
-            editable={!sending}
-          />
-          <Pressable
-            testID="trainer-send"
-            onPress={send}
-            disabled={sending || input.trim().length === 0}
-            style={({ pressed }) => [
-              styles.sendBtn,
-              { opacity: sending || input.trim().length === 0 ? 0.4 : 1, transform: [{ scale: pressed ? 0.94 : 1 }] },
-            ]}
-          >
-            <Send size={20} color="#fff" strokeWidth={2.5} />
-          </Pressable>
-        </View>
+        {limitReached ? (
+          <View style={{ paddingHorizontal: 16, paddingVertical: 12 }}>
+            <LimitReachedCard
+              title="Has usado tus 5 mensajes de hoy"
+              message="Mañana se renueva automáticamente. ¿Quieres mensajes ilimitados con Chispa Pro?"
+              testID="trainer-limit-card"
+            />
+          </View>
+        ) : (
+          <View style={styles.inputBar}>
+            <TextInput
+              testID="trainer-input"
+              style={styles.input}
+              placeholder="Escribe tu idea o pregunta…"
+              placeholderTextColor={COLORS.muted}
+              value={input}
+              onChangeText={setInput}
+              multiline
+              editable={!sending}
+            />
+            <Pressable
+              testID="trainer-send"
+              onPress={send}
+              disabled={sending || input.trim().length === 0}
+              style={({ pressed }) => [
+                styles.sendBtn,
+                { opacity: sending || input.trim().length === 0 ? 0.4 : 1, transform: [{ scale: pressed ? 0.94 : 1 }] },
+              ]}
+            >
+              <Send size={20} color="#fff" strokeWidth={2.5} />
+            </Pressable>
+          </View>
+        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -272,6 +302,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: { fontFamily: FONTS.heading,  fontSize: 18, fontWeight: '900', color: COLORS.text },
   headerSub: { fontSize: 12, color: COLORS.muted, fontWeight: '700' },
+  headerSubRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 2, flexWrap: 'wrap' },
   resetBtn: {
     width: 36,
     height: 36,

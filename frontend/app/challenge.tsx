@@ -22,14 +22,19 @@ import MascotBubble from '../src/components/MascotBubble';
 import { COLORS, FONTS, xpProgress } from '../src/lib/levels';
 import {
   applyChallengeCompletion,
+  CachedChallenge,
   loadCachedChallenge,
+  loadPreviousChallenge,
   loadProfile,
   Profile,
   saveCachedChallenge,
   saveProfile,
   todayStr,
+  XP_REWARDS,
 } from '../src/lib/storage';
 import { api, DailyChallenge as ChallengeT, ChallengeFeedback } from '../src/lib/api';
+
+type ChallengeOrigin = 'new' | 'retake';
 
 export default function Challenge() {
   const router = useRouter();
@@ -41,6 +46,11 @@ export default function Challenge() {
   const [feedback, setFeedback] = useState<ChallengeFeedback | null>(null);
   const [showHint, setShowHint] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const [origin, setOrigin] = useState<ChallengeOrigin>('new');
+  const [previousChallenge, setPreviousChallenge] = useState<CachedChallenge | null>(null);
+  const [showChoice, setShowChoice] = useState(false);
+
+  const xpReward = origin === 'retake' ? XP_REWARDS.challengeRetake : XP_REWARDS.challengeNew;
 
   const fetchChallenge = useCallback(async (p: Profile) => {
     setLoading(true);
@@ -49,23 +59,81 @@ export default function Challenge() {
       const today = todayStr();
       const level = xpProgress(p.xp).level;
       if (cached && cached.date === today && cached.level === level) {
+        // Today's challenge already in progress
         setChallenge(cached.data);
+        setOrigin((cached.origin as ChallengeOrigin) ?? 'new');
         if (cached.completed) {
           setCompleted(true);
           if (cached.feedback) setFeedback(cached.feedback);
           if (cached.response) setResponse(cached.response);
         }
-      } else {
-        const data = await api.dailyChallenge(level, p.purpose, today);
-        setChallenge(data);
-        await saveCachedChallenge({ date: today, level, data, completed: false });
+        setLoading(false);
+        return;
       }
-    } catch (e: any) {
+      // No challenge for today yet — check if there is a previous one to offer retake
+      const prev = await loadPreviousChallenge();
+      if (prev) {
+        setPreviousChallenge(prev);
+        setShowChoice(true);
+        setLoading(false);
+        return;
+      }
+      // First-time user (no history) → just load a new one
+      await fetchNewChallenge(p, 'new');
+    } catch {
       Alert.alert('Ups', 'No pude cargar el reto. Revisa tu conexión.');
-    } finally {
       setLoading(false);
     }
   }, []);
+
+  const fetchNewChallenge = async (p: Profile, originType: ChallengeOrigin) => {
+    setLoading(true);
+    try {
+      const today = todayStr();
+      const level = xpProgress(p.xp).level;
+      const data = await api.dailyChallenge(level, p.purpose, today);
+      setChallenge(data);
+      setOrigin(originType);
+      setShowChoice(false);
+      await saveCachedChallenge({
+        date: today,
+        level,
+        data,
+        completed: false,
+        origin: originType,
+        xpReward: originType === 'retake' ? XP_REWARDS.challengeRetake : XP_REWARDS.challengeNew,
+      });
+    } catch {
+      Alert.alert('Ups', 'No pude cargar el reto.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const chooseRetake = async () => {
+    if (!profile || !previousChallenge) return;
+    const today = todayStr();
+    const level = xpProgress(profile.xp).level;
+    setChallenge(previousChallenge.data);
+    setOrigin('retake');
+    setShowChoice(false);
+    setResponse(''); // clear so user can re-engage fresh
+    setCompleted(false);
+    setFeedback(null);
+    await saveCachedChallenge({
+      date: today,
+      level,
+      data: previousChallenge.data,
+      completed: false,
+      origin: 'retake',
+      xpReward: XP_REWARDS.challengeRetake,
+    });
+  };
+
+  const chooseNew = async () => {
+    if (!profile) return;
+    await fetchNewChallenge(profile, 'new');
+  };
 
   useEffect(() => {
     (async () => {
@@ -81,9 +149,12 @@ export default function Challenge() {
     try {
       const level = xpProgress(profile.xp).level;
       const fb = await api.challengeFeedback(level, profile.purpose, challenge.prompt, response.trim());
-      setFeedback(fb);
+      // Use our retake/new XP reward (overrides the API's suggestion)
+      const finalXp = xpReward;
+      const finalFeedback: ChallengeFeedback = { ...fb, xp: finalXp };
+      setFeedback(finalFeedback);
 
-      const updated = applyChallengeCompletion(profile, fb.xp);
+      const updated = applyChallengeCompletion(profile, finalXp);
       await saveProfile(updated);
       setProfile(updated);
       const today = todayStr();
@@ -92,8 +163,10 @@ export default function Challenge() {
         level,
         data: challenge,
         completed: true,
-        feedback: fb,
+        feedback: finalFeedback,
         response: response.trim(),
+        origin,
+        xpReward: finalXp,
       });
       setCompleted(true);
       if (Platform.OS !== 'web') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
